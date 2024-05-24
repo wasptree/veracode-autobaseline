@@ -1,7 +1,7 @@
 import os
 from github import Github
 import datetime
-from baselineLogging import log
+from modules.baselineLogging import log
 from argparse import ArgumentParser
 
 def check_github():
