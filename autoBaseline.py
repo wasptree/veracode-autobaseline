@@ -19,7 +19,7 @@ def load_arguments(org_name, commit_msg, repo_name, github_ref_name):
                         help="Github Access Token")
     parser.add_argument("-r", "--repo", default=(org_name + "/veracode-baseline"), \
                         help="Name of the repository where the baseline will be stored. Example: wasptree/veracode-baseline")
-    parser.add_argument("-p" "--policy", default=True,
+    parser.add_argument("-p", "--policy", default=True,
                         help="Specify whether Policy scan results should be downloaded")
     parser.add_argument("-f", "--file", default="results.json",
                         help="Specify the name of the results/baseline file (json) to read in")
