@@ -4,6 +4,6 @@ COPY modules /modules
 
 COPY autoBaseline.py autoBaseline.py
 
-RUN pip install requirements.txt
+RUN pip install -r requirements.txt
 
 ENTRYPOINT  ["python", "./autoBaseline.py"]
