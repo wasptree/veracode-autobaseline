@@ -1,0 +1,50 @@
+name: "Veracode Auto Baseline"
+description: "This action Will attempt to automatically store and download baseline files for Veracode SAST"
+author: "Andy Sutcliffe - Wasptree"
+
+inputs:
+  token:
+    description: "Github Access Token"
+    required: true
+  repo:
+    description: "Name of the repository where the baseline will be stored."
+    required: false
+    default: "org_name/veracode-baseline"
+  policy:
+    description: "Specify whether Policy scan results should be downloaded"
+    required: false
+    default: "true"
+  file:
+    description: "Specify the name of the results/baseline file (json) to read in"
+    required: false
+    default: "results.json"
+  commit:
+    description: "Custom commit message"
+    required: false
+    default: "commit_msg"
+  appname:
+    description: "Specify the appname, used to download policy-to-baseline from Veracode platform"
+    required: false
+    default: "repo_name"
+  branch:
+    description: "Override the default ref, which is the branch name"
+    required: false
+    default: "github_ref_name"
+  checkbf:
+    description: "Check if the baseline file to be pushed is new (less than 10 minutes old)"
+    required: false
+    default: "true"
+
+runs:
+  using: "docker"
+  image: "docker://wasptree/veracode-autobaseline:latest"
+  args: [
+    "--token", "${{ inputs.token }}",
+    "--repo", "${{ inputs.repo }}",
+    "--policy", "${{ inputs.policy }}",
+    "--file", "${{ inputs.file }}",
+    "--commit", "${{ inputs.commit }}",
+    "--appname", "${{ inputs.appname }}",
+    "--branch", "${{ inputs.branch }}",
+    "--checkbf", "${{ inputs.checkbf }}"
+  ]
