@@ -141,6 +141,7 @@ def download_baseline_file(access_token, repo_name, file_path, output_path):
         return False
 
 def dummy_baseline(file):
+    log("No baseline file retrieved - creating Dummy baseline.json", 'INFO')
     json_data = {
     "findings": []
     }
