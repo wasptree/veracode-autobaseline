@@ -194,7 +194,7 @@ if __name__ == "__main__":
     if is_pull_request_event():
         if not download_baseline_file(token, repo, target_path, "baseline.json") and not os.path.exists(file):
             # If no baseline file , create a dummy to avoid pipeline scan failure
-            dummy_baseline
+            dummy_baseline(file)
         
     else:
         if check_baseline:
