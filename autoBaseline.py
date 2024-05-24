@@ -146,8 +146,8 @@ def dummy_baseline(file):
     "findings": []
     }
     
-    with open(file, 'w') as file:
-        json.dump(json_data, file)
+    with open(file, 'w') as f:
+        json.dump(json_data, f)
     
 
 # Example usage
@@ -194,7 +194,7 @@ if __name__ == "__main__":
     if is_pull_request_event():
         if not download_baseline_file(token, repo, target_path, "baseline.json") and not os.path.exists(file):
             # If no baseline file , create a dummy to avoid pipeline scan failure
-            dummy_baseline(file)
+            dummy_baseline("baseline.json")
         
     else:
         if check_baseline:
