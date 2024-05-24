@@ -3,6 +3,7 @@ from github import Github
 import datetime
 from modules.baselineLogging import log
 from argparse import ArgumentParser
+import json
 
 def check_github():
     return 'GITHUB_ACTIONS' in os.environ
@@ -139,6 +140,15 @@ def download_baseline_file(access_token, repo_name, file_path, output_path):
         log(f"Error downloading file from repository: {e}", 'ERROR')
         return False
 
+def dummy_baseline(file):
+    json_data = {
+    "findings": []
+    }
+    
+    with open(file, 'w') as file:
+        json.dump(json_data, file)
+    
+
 # Example usage
 if __name__ == "__main__":
 
@@ -181,8 +191,9 @@ if __name__ == "__main__":
     # Check if running on PR, if so attempt to download a baseline file
     # If not PR attempt to upload a baseline file
     if is_pull_request_event():
-        download_baseline_file(token, repo, target_path, "baseline.json")
-        # if No baseline file - download from policy scan results? - Future feature
+        if not download_baseline_file(token, repo, target_path, "baseline.json") and not os.path.exists(file):
+            # If no baseline file , create a dummy to avoid pipeline scan failure
+            dummy_baseline
         
     else:
         if check_baseline:
