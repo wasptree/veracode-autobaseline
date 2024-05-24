@@ -38,7 +38,6 @@ inputs:
 runs:
   using: "docker"
   image: "docker://wasptree/veracode-autobaseline:latest"
-  entrypoint: ["python", "/autoBaseline.py"]
   args: [
     "--token", "${{ inputs.token }}",
     "--repo", "${{ inputs.repo }}",
