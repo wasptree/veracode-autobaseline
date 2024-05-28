@@ -27,6 +27,9 @@ inputs:
   checkbf:
     description: "Check if the baseline file to be pushed is new (less than 10 minutes old)"
     required: false
+  update:
+    description: "Whether a new baseline file should be pushed up to the repository"
+    required: false
 
 runs:
   using: "docker"
@@ -39,5 +42,6 @@ runs:
     "--commit", "${{ inputs.commit }}",
     "--appname", "${{ inputs.appname }}",
     "--branch", "${{ inputs.branch }}",
-    "--checkbf", "${{ inputs.checkbf }}"
+    "--checkbf", "${{ inputs.checkbf }}",
+    "--update", "${{ inputs.update }}"
   ]
