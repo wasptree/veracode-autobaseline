@@ -32,6 +32,8 @@ def load_arguments(org_name, commit_msg, repo_name, github_ref_name):
                         help="Override the default ref, which is the branch name")
     parser.add_argument("-cf", "--checkbf", default=True,
                         help="Check if the baseline file to be pushed is new (less than 10 minutes old)")
+    parser.add_argument("-u", "--update", default=False,
+                        help="Used to update the baseline file in the repository, run after scan")
     args = parser.parse_args()
     return (
             args.token,
@@ -41,7 +43,8 @@ def load_arguments(org_name, commit_msg, repo_name, github_ref_name):
             args.commit,
             args.appname,
             args.branch,
-            args.checkbf
+            args.checkbf,
+            args.update
             )
 
 
@@ -183,7 +186,8 @@ if __name__ == "__main__":
     commit_message,
     appname,
     branch,
-    check_baseline
+    check_baseline,
+    update
     ) = load_arguments(org_name, commit_message, github_repository, github_ref_name)
 
     # Specify the path structure for the baseline files
@@ -196,11 +200,11 @@ if __name__ == "__main__":
             # If no baseline file , create a dummy to avoid pipeline scan failure
             dummy_baseline("baseline.json")
         
-    else:
+    elif update:
         if check_baseline:
             if check_baseline_file_age(file):
                 push_baseline_update(token, repo, file, target_path, commit_message)
             else:
                 log("Baseline file does not appear to be new - skipping baseline update", 'WARN')
-            
-
+        else:
+            push_baseline_update(token, repo, file, target_path, commit_message)
