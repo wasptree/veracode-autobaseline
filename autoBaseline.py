@@ -1,9 +1,12 @@
 import os
 from github import Github
-import datetime
+from datetime import datetime
 from modules.baselineLogging import log
 from argparse import ArgumentParser
 import json
+
+TEMP_DIRECTORY = ".veracode-autobaseline"
+BASELINE_FILE = "baseline.json"
 
 def check_github():
     return 'GITHUB_ACTIONS' in os.environ
@@ -14,22 +17,33 @@ def get_org_name(github_repository):
     else:
         log("Invalid GITHUB_REPOSITORY format: %s Expected 'owner/repo'." % github_repository, 'ERROR')
 
-def load_arguments(org_name, commit_msg, repo_name, github_ref_name):
+def get_repo_name(github_repository):
+    if '/' in github_repository:
+        return github_repository.split('/')[1]
+    else:
+        log("Invalid GITHUB_REPOSITORY format: %s Expected 'owner/repo'." % github_repository, 'ERROR')
+
+def load_arguments(commit_msg, github_repository, github_ref_name):
+    
+    org_name = get_org_name(github_repository)
+
     parser = ArgumentParser()
     parser.add_argument("-t", "--token", required=True,
                         help="Github Access Token")
-    parser.add_argument("-r", "--repo", default=(org_name + "/veracode-baseline"), \
-                        help="Name of the repository where the baseline will be stored. Example: wasptree/veracode-baseline")
-    parser.add_argument("-p", "--policy", default=True,
-                        help="Specify whether Policy scan results should be downloaded")
+    parser.add_argument("-s", "--source", default=(org_name + "/veracode-baseline"), \
+                        help="Name of the repository where the baseline files will be stored. Example: wasptree/veracode-baseline")
+    #parser.add_argument("-p", "--policy", default=True,
+    #                    help="Specify whether Policy scan results should be downloaded")
     parser.add_argument("-f", "--file", default="results.json",
                         help="Specify the name of the results/baseline file (json) to read in")
     parser.add_argument("-c", "--commit", default=commit_msg,
                         help="Custom commit message")
-    parser.add_argument("-a", "--appname", default=repo_name,
-                        help="Specify the appname, used to download policy-to-baseline from Veracode platform")
+    #parser.add_argument("-a", "--appname", default=github_repository,
+    #                    help="Specify the appname, used to download policy-to-baseline from Veracode platform")
     parser.add_argument("-b", "--branch", default=github_ref_name,
                         help="Override the default ref, which is the branch name")
+    parser.add_argument("-r", "--repo", default=github_repository,
+                        help="Override the name of the owner/project for storage. Example : wasptree/verademo")
     parser.add_argument("-cf", "--checkbf", default=True,
                         help="Check if the baseline file to be pushed is new (less than 10 minutes old)")
     parser.add_argument("-u", "--update", default=False,
@@ -37,12 +51,11 @@ def load_arguments(org_name, commit_msg, repo_name, github_ref_name):
     args = parser.parse_args()
     return (
             args.token,
-            args.repo,
-            args.policy,
+            args.source,
             args.file,
             args.commit,
-            args.appname,
             args.branch,
+            args.repo,
             args.checkbf,
             args.update
             )
@@ -103,13 +116,15 @@ def push_baseline_update(token, repo, baseline_file, target_path, commit_message
     push_file_to_repo(token, repo, target_path, baseline_contents, commit_message)
 
 def check_baseline_file_age(file):
+    log("Checking the age of the local results.json file", 'INFO')
     try:
         # Get the modification time of the file
         modification_time = os.path.getmtime(file)
+        modification_datetime = datetime.fromtimestamp(modification_time)
         # Get the current time
-        current_time = datetime.time()
+        current_datetime = datetime.now()
         # Calculate the time difference in seconds
-        time_difference = current_time - modification_time
+        time_difference = (current_datetime - modification_datetime).total_seconds()
         # Check if the time difference is less than 10 minutes old
         if time_difference < 600:
             return True
@@ -121,6 +136,7 @@ def check_baseline_file_age(file):
         return False
 
 def download_baseline_file(access_token, repo_name, file_path, output_path):
+    log(f"Attempting to download baseline file from: {repo_name}/{file_path}", 'INFO')
     try:
         # Authenticate with GitHub using the access token
         g = Github(access_token)
@@ -135,12 +151,15 @@ def download_baseline_file(access_token, repo_name, file_path, output_path):
         file_content = contents.decoded_content.decode()
 
         # Write the content to the output file
+
+        check_temp_directory(output_path)
+        
         with open(output_path, 'w') as file:
             file.write(file_content)
 
         return True
     except Exception as e:
-        log(f"Error downloading file from repository: {e}", 'ERROR')
+        log(f"Error downloading file from repository: {file_path} {e}", 'WARN')
         return False
 
 def dummy_baseline(file):
@@ -149,9 +168,24 @@ def dummy_baseline(file):
     "findings": []
     }
     
+    check_temp_directory(file)
+
     with open(file, 'w') as f:
         json.dump(json_data, f)
+
+def check_temp_directory(file_path):
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     
+def is_valid_json(file):
+    try:
+        with open(file, 'r') as f:
+            json.load(f)
+        return True
+    except (json.JSONDecodeError, FileNotFoundError) as e:
+        log(f"Error checking file '{file}': {e}", 'ERROR')
+        return False
 
 # Example usage
 if __name__ == "__main__":
@@ -171,40 +205,43 @@ if __name__ == "__main__":
     github_ref_name
     ) = get_github_variables()
 
-    # extract the org name
-    org_name = get_org_name(github_repository)
-
     commit_message = "Veracode baseline file update from repo: %s branch: %s pipeline: %s" \
-        % (github_repository, github_ref_name, github_run_id) 
+    % (github_repository, github_ref_name, github_run_id)
 
     # load arguments
     (
     token,
-    repo,
-    policy,
+    source,
     file,
     commit_message,
-    appname,
     branch,
+    repo,
     check_baseline,
     update
-    ) = load_arguments(org_name, commit_message, github_repository, github_ref_name)
+    ) = load_arguments(commit_message, github_repository, github_ref_name)
+
+    org_name = get_org_name(repo)
+    repo_name = get_repo_name(repo)
 
     # Specify the path structure for the baseline files
-    target_path = repo + "/" + branch + "/" + "baseline.json"
+    target_path = repo_name + "/" + branch + "/" + "baseline.json"
+    temp_directory = TEMP_DIRECTORY + "/"
+    output_file = temp_directory + BASELINE_FILE
 
     # Check if running on PR, if so attempt to download a baseline file
     # If not PR attempt to upload a baseline file
     if is_pull_request_event():
-        if not download_baseline_file(token, repo, target_path, "baseline.json") and not os.path.exists(file):
+        if not download_baseline_file(token, source, target_path, output_file) and not os.path.exists(output_file):
             # If no baseline file , create a dummy to avoid pipeline scan failure
-            dummy_baseline("baseline.json")
-        
+            dummy_baseline(output_file)
+        is_valid_json(output_file)
+    #Check that the baseline file is valid Json before continuing
+    
     elif update:
         if check_baseline:
             if check_baseline_file_age(file):
                 push_baseline_update(token, repo, file, target_path, commit_message)
             else:
-                log("Baseline file does not appear to be new - skipping baseline update", 'WARN')
+                log("Baseline file appears to be old - skipping baseline update", 'WARN')
         else:
             push_baseline_update(token, repo, file, target_path, commit_message)
