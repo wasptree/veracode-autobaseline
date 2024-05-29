@@ -9,17 +9,11 @@ inputs:
   repo:
     description: "Name of the repository where the baseline will be stored."
     required: false
-  policy:
-    description: "Specify whether Policy scan results should be downloaded"
-    required: false
   file:
     description: "Specify the name of the results/baseline file (json) to read in"
     required: false
   commit:
     description: "Custom commit message"
-    required: false
-  appname:
-    description: "Specify the appname, used to download policy-to-baseline from Veracode platform"
     required: false
   branch:
     description: "Override the default ref, which is the branch name"
@@ -37,10 +31,8 @@ runs:
   args: [
     "--token", "${{ inputs.token }}",
     "--repo", "${{ inputs.repo }}",
-    "--policy", "${{ inputs.policy }}",
     "--file", "${{ inputs.file }}",
     "--commit", "${{ inputs.commit }}",
-    "--appname", "${{ inputs.appname }}",
     "--branch", "${{ inputs.branch }}",
     "--checkbf", "${{ inputs.checkbf }}",
     "--update", "${{ inputs.update }}"
