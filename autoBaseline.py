@@ -264,7 +264,7 @@ if __name__ == "__main__":
     elif update:
         if check_baseline:
             if check_baseline_file_age(file):
-                push_baseline_update(token, repo, file, target_path, commit)
+                push_baseline_update(token, source, file, target_path, commit)
             else:
                 log("Baseline file appears to be old - skipping baseline update", 'WARN')
         else:
