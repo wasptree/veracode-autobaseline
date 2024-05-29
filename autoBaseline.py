@@ -241,9 +241,9 @@ if __name__ == "__main__":
     org_name = get_org_name(repo)
     repo_name = get_repo_name(repo)
 
-    print("DEBUG 1 : " + repo_name)
-    print("DEBUG 2 : " + org_name)
-    print("DEBUG 3 : " + repo)
+    #print("DEBUG 1 : " + repo_name)
+    #print("DEBUG 2 : " + org_name)
+    #print("DEBUG 3 : " + repo)
 
     # Specify the path structure for the baseline files
     target_path = repo_name + "/" + branch + "/" + "baseline.json"
