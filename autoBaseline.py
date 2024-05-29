@@ -23,7 +23,16 @@ def get_repo_name(github_repository):
     else:
         log("Invalid GITHUB_REPOSITORY format: %s Expected 'owner/repo'." % github_repository, 'ERROR')
 
-def load_arguments(github_repository, github_ref_name, github_run_id):
+def load_arguments():
+
+    (
+    github_base_ref,
+    github_ref,
+    github_repository,
+    github_sha,
+    github_run_id,
+    github_ref_name
+    ) = get_github_variables()
     
     parser = ArgumentParser()
     parser.add_argument("-t", "--token", required=True,
@@ -250,7 +259,7 @@ if __name__ == "__main__":
     repo,
     check_baseline,
     update
-    ) = load_arguments(github_repository, github_ref_name, github_run_id)
+    ) = load_arguments()
 
     print("repo : " + repo)
 
