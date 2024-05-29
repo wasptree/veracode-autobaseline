@@ -23,9 +23,14 @@ def get_repo_name(github_repository):
     else:
         log("Invalid GITHUB_REPOSITORY format: %s Expected 'owner/repo'." % github_repository, 'ERROR')
 
-def load_arguments(commit_msg, github_repository, github_ref_name):
+def load_arguments(github_repository, github_ref_name, github_run_id):
     
-    print("args github_repository: " + github_repository)
+    commit_msg = "Veracode baseline file update from repo: %s branch: %s pipeline: %s" \
+    % (github_repository, github_ref_name, github_run_id)
+
+    default_repository = github_repository
+
+    default_ref_name = github_ref_name
 
     org_name = get_org_name(github_repository)
 
@@ -44,7 +49,7 @@ def load_arguments(commit_msg, github_repository, github_ref_name):
     #                    help="Specify the appname, used to download policy-to-baseline from Veracode platform")
     parser.add_argument("-b", "--branch", default=github_ref_name,
                         help="Override the default ref, which is the branch name")
-    parser.add_argument("-r", "--repo", default=github_repository,
+    parser.add_argument("-r", "--repo", default=default_repository,
                         help="Override the name of the owner/project for storage. Example : wasptree/verademo")
     parser.add_argument("-cf", "--checkbf", default=True,
                         help="Check if the baseline file to be pushed is new (less than 10 minutes old)")
@@ -229,9 +234,6 @@ if __name__ == "__main__":
 
     print("github_repository: " + github_repository ) 
 
-    commit_message = "Veracode baseline file update from repo: %s branch: %s pipeline: %s" \
-    % (github_repository, github_ref_name, github_run_id)
-
     # load arguments
     (
     token,
@@ -242,7 +244,7 @@ if __name__ == "__main__":
     repo,
     check_baseline,
     update
-    ) = load_arguments(commit_message, github_repository, github_ref_name)
+    ) = load_arguments(github_repository, github_ref_name, github_run_id)
 
     print("repo : " + repo)
 
