@@ -42,7 +42,7 @@ def load_arguments():
     parser = ArgumentParser()
     parser.add_argument("-t", "--token", required=True,
                         help="Github Access Token")
-    parser.add_argument("-s", "--source", default = (org_name + "/veracode-baseline")\
+    parser.add_argument("-s", "--source", default = (org_name + "/veracode-baseline"),\
                         help="Name of the repository where the baseline files will be stored. Example: wasptree/veracode-baseline")
     #parser.add_argument("-p", "--policy", default=True,
     #                    help="Specify whether Policy scan results should be downloaded")
