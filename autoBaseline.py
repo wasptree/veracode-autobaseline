@@ -54,7 +54,7 @@ def load_arguments(commit_msg, github_repository, github_ref_name):
 
     print("post args github_repository : " + github_repository)
     print("post args repo : " + args.repo)
-    print("post args commit : " + args.commit_msg)
+    print("post args commit : " + args.commit)
     print("post args branch : " + args.branch)
 
     return (
