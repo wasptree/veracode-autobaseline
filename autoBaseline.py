@@ -44,24 +44,26 @@ def load_arguments():
                         help="Github Access Token")
     parser.add_argument("-s", "--source",
                         help="Name of the repository where the baseline files will be stored. Example: wasptree/veracode-baseline")
-    #parser.add_argument("-p", "--policy", default=True,
+    #parser.add_argument("-p", "--policy",
     #                    help="Specify whether Policy scan results should be downloaded")
-    parser.add_argument("-f", "--file", default="results.json",
+    parser.add_argument("-f", "--file",
                         help="Specify the name of the results/baseline file (json) to read in")
     parser.add_argument("-c", "--commit",
                         help="Custom commit message")
-    #parser.add_argument("-a", "--appname", default=github_repository,
+    #parser.add_argument("-a", "--appname",
     #                    help="Specify the appname, used to download policy-to-baseline from Veracode platform")
     parser.add_argument("-b", "--branch",
                         help="Override the default ref, which is the branch name")
     parser.add_argument("-r", "--repo",
                         help="Override the name of the owner/project for storage. Example : wasptree/verademo")
-    parser.add_argument("-cf", "--checkbf", default=True,
+    parser.add_argument("-cf", "--checkbf",
                         help="Check if the baseline file to be pushed is new (less than 10 minutes old)")
-    parser.add_argument("-u", "--update", default=False,
+    parser.add_argument("-u", "--update",
                         help="Used to update the baseline file in the repository, run after scan")
     args = parser.parse_args()
 
+    if args.file == "":
+        args.file = "results.json"
     if args.source == "":
         args.source = (org_name + "/veracode-baseline")
     if args.commit == "":
@@ -70,6 +72,10 @@ def load_arguments():
         args.branch = github_ref_name
     if args.repo == "":
         args.repo = github_repository
+    if args.checkbf == "":
+        args.checkbf = True
+    if args.update == "":
+        args.update = False
 
     print("post args github_repository : " + github_repository)
     print("post args repo : " + args.repo)
