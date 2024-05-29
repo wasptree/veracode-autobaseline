@@ -6,7 +6,7 @@ inputs:
   token:
     description: "Github Access Token"
     required: true
-  repo:
+  source:
     description: "Name of the repository where the baseline will be stored."
     required: false
   file:
@@ -17,6 +17,9 @@ inputs:
     required: false
   branch:
     description: "Override the default ref, which is the branch name"
+    required: false
+  repo:
+    description: "Overrise the defaut repository, which is taken from the Github environment"
     required: false
   checkbf:
     description: "Check if the baseline file to be pushed is new (less than 10 minutes old)"
@@ -30,10 +33,11 @@ runs:
   image: "docker://wasptree/veracode-autobaseline:latest"
   args: [
     "--token", "${{ inputs.token }}",
-    "--repo", "${{ inputs.repo }}",
+    "--source", "${{ inputs.source }}",
     "--file", "${{ inputs.file }}",
     "--commit", "${{ inputs.commit }}",
     "--branch", "${{ inputs.branch }}",
+    "--repo", "${{ inputs.repo }}",
     "--checkbf", "${{ inputs.checkbf }}",
     "--update", "${{ inputs.update }}"
   ]
