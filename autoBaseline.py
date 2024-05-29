@@ -255,7 +255,7 @@ if __name__ == "__main__":
 
     # Check if running on PR, if so attempt to download a baseline file
     # If not PR attempt to upload a baseline file
-    if is_pull_request_event():
+    if is_pull_request_event() and not update:
         if not download_baseline_file(token, source, target_path, output_file) and not os.path.exists(output_file):
             # If no baseline file , create a dummy to avoid pipeline scan failure
             dummy_baseline(output_file)
