@@ -67,19 +67,26 @@ def is_pull_request_event():
 
 # Function to grab the Github variables, used to store and lookup the required baseline file
 def get_github_variables():
-    github_base_ref = os.getenv('GITHUB_BASE_REF')
-    github_ref = os.getenv('GITHUB_REF')
-    github_repository = os.getenv('GITHUB_REPOSITORY')
-    github_sha = os.getenv('GITHUB_SHA')
-    github_run_id = os.getenv('GITHUB_RUN_ID')
-    github_ref_name = os.getenv('GITHUB_REF_NAME')
+    #github_base_ref = os.getenv('GITHUB_BASE_REF')
+    #github_ref = os.getenv('GITHUB_REF')
+    #github_repository = os.getenv('GITHUB_REPOSITORY')
+    #github_sha = os.getenv('GITHUB_SHA')
+    #github_run_id = os.getenv('GITHUB_RUN_ID')
+    #github_ref_name = os.getenv('GITHUB_REF_NAME')
     
-    print("github_base_ref: " + github_base_ref)
-    print("github_ref: " + github_ref)
-    print("github_ref_name: " + github_ref_name)
-    print("github_repository: " + github_repository)
-    print("github_run_id: " + github_run_id)
-    print("github_sha: " +github_sha)
+    #print("github_base_ref: " + github_base_ref)
+    #print("github_ref: " + github_ref)
+    #print("github_ref_name: " + github_ref_name)
+    #print("github_repository: " + github_repository)
+    #print("github_run_id: " + github_run_id)
+    #print("github_sha: " +github_sha)
+
+    github_base_ref = ""
+    github_ref = "refs/heads/autobaseline"
+    github_repository = "Wasptree-Veracode/verademo"
+    github_sha = "fd6dddaec6b74109d8250343ebc431c126dd3cfd"
+    github_run_id = "9284829460"
+    github_ref_name = "autobaseline"
 
     return (github_base_ref,
             github_ref,
@@ -198,9 +205,9 @@ def is_valid_json(file):
 if __name__ == "__main__":
 
     #Check that we are executing within a Github action
-    if not check_github():
-        log("Not executing within a Github action - Exiting", 'ERROR')
-        exit(1)
+    #if not check_github():
+    #    log("Not executing within a Github action - Exiting", 'ERROR')
+    #    exit(1)
 
     #Grab environment variables from pipeline
     (
@@ -230,6 +237,10 @@ if __name__ == "__main__":
     org_name = get_org_name(repo)
     repo_name = get_repo_name(repo)
 
+    print("DEBUG 1 : " + repo_name)
+    print("DEBUG 2 : " + org_name)
+    print("DEBUG 3 : " + repo)
+
     # Specify the path structure for the baseline files
     target_path = repo_name + "/" + branch + "/" + "baseline.json"
     temp_directory = TEMP_DIRECTORY + "/"
@@ -237,14 +248,14 @@ if __name__ == "__main__":
 
     # Check if running on PR, if so attempt to download a baseline file
     # If not PR attempt to upload a baseline file
-    if is_pull_request_event():
-        if not download_baseline_file(token, source, target_path, output_file) and not os.path.exists(output_file):
+    #if is_pull_request_event():
+    if not download_baseline_file(token, source, target_path, output_file) and not os.path.exists(output_file):
             # If no baseline file , create a dummy to avoid pipeline scan failure
-            dummy_baseline(output_file)
-        is_valid_json(output_file)
+        dummy_baseline(output_file)
+    is_valid_json(output_file)
     #Check that the baseline file is valid Json before continuing
     
-    elif update:
+    if update:
         if check_baseline:
             if check_baseline_file_age(file):
                 push_baseline_update(token, repo, file, target_path, commit_message)
