@@ -219,6 +219,8 @@ if __name__ == "__main__":
     github_ref_name
     ) = get_github_variables()
 
+    print("github_repository: " + github_repository ) 
+
     commit_message = "Veracode baseline file update from repo: %s branch: %s pipeline: %s" \
     % (github_repository, github_ref_name, github_run_id)
 
@@ -233,6 +235,8 @@ if __name__ == "__main__":
     check_baseline,
     update
     ) = load_arguments(commit_message, github_repository, github_ref_name)
+
+    print("repo : " + repo)
 
     org_name = get_org_name(repo)
     repo_name = get_repo_name(repo)
