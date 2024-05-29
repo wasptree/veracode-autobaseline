@@ -75,6 +75,8 @@ def load_arguments():
     print("post args repo : " + args.repo)
     print("post args commit : " + args.commit)
     print("post args branch : " + args.branch)
+    print(args.update)
+    print(args.checkbf)
 
     return (
             args.token,
