@@ -49,7 +49,7 @@ def load_arguments():
     parser.add_argument("-c", "--commit",
                         help="Custom commit message")
     parser.add_argument("-b", "--branch",
-                        help="Override the default ref, which is the branch name | Default is GITHUB_REF_NAME ")
+                        help="Override the default ref, which is the branch name | Default is GITHUB_BASE_REF ")
     parser.add_argument("-r", "--repo",
                         help="Override the name of the owner/project for storage. | Default is GITHUB_REPOSITORY ")
     parser.add_argument("-cf", "--checkbf",
@@ -65,7 +65,7 @@ def load_arguments():
     if args.commit == "":
         args.commit = commit_msg
     if args.branch == "":
-        args.branch = github_ref_name
+        args.branch = github_base_ref
     if args.repo == "":
         args.repo = github_repository
     if args.checkbf == "":
@@ -233,8 +233,6 @@ if __name__ == "__main__":
     github_ref_name
     ) = get_github_variables()
 
-    print("github_repository: " + github_repository ) 
-
     # load arguments
     (
     token,
@@ -263,7 +261,6 @@ if __name__ == "__main__":
             dummy_baseline(output_file)
         is_valid_json(output_file)
     #Check that the baseline file is valid Json before continuing
-    
     elif update:
         if check_baseline:
             if check_baseline_file_age(file):
@@ -272,3 +269,5 @@ if __name__ == "__main__":
                 log("Baseline file appears to be old - skipping baseline update", 'WARN')
         else:
             push_baseline_update(token, repo, file, target_path, commit)
+    else:
+        log("Not running in a Pull Request - Skipping", 'INFO')
