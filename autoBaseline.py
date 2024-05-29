@@ -23,7 +23,7 @@ def get_repo_name(github_repository):
     else:
         log("Invalid GITHUB_REPOSITORY format: %s Expected 'owner/repo'." % github_repository, 'ERROR')
 
-def load_arguments(github_repository=None, github_ref_name=None, github_run_id=None):
+def load_arguments(commit_msg=None, github_repository=None, github_ref_name=None, github_run_id=None):
     
     if commit_msg is None:
         commit_msg = "Veracode baseline file update from repo: %s branch: %s pipeline: %s" \
@@ -247,7 +247,7 @@ if __name__ == "__main__":
     repo,
     check_baseline,
     update
-    ) = load_arguments(github_repository, github_ref_name, github_run_id)
+    ) = load_arguments(None, github_repository, github_ref_name, github_run_id)
 
     print("repo : " + repo)
 
