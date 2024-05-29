@@ -25,6 +25,8 @@ def get_repo_name(github_repository):
 
 def load_arguments(commit_msg, github_repository, github_ref_name):
     
+    print("args github_repository: " + github_repository)
+
     org_name = get_org_name(github_repository)
 
     parser = ArgumentParser()
@@ -49,6 +51,10 @@ def load_arguments(commit_msg, github_repository, github_ref_name):
     parser.add_argument("-u", "--update", default=False,
                         help="Used to update the baseline file in the repository, run after scan")
     args = parser.parse_args()
+
+    print("post args github_repository : " + github_repository)
+    print("post args repo : " + args.repo)
+
     return (
             args.token,
             args.source,
