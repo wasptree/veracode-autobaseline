@@ -74,6 +74,13 @@ def get_github_variables():
     github_run_id = os.getenv('GITHUB_RUN_ID')
     github_ref_name = os.getenv('GITHUB_REF_NAME')
     
+    print(github_base_ref)
+    print(github_ref)
+    print(github_ref_name)
+    print(github_repository)
+    print(github_run_id)
+    print(github_sha)
+
     return (github_base_ref,
             github_ref,
             github_repository,
