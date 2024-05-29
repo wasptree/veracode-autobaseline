@@ -81,8 +81,13 @@ def load_arguments():
     print("post args repo : " + args.repo)
     print("post args commit : " + args.commit)
     print("post args branch : " + args.branch)
-    print("update value : " + args.update)
-    print("checkbf value : " + args.checkbf)
+    print(type(args.update))
+    print(type(args.checkbf))
+
+    if args.update:
+        print("Args update is True")
+    if args.checkbf:
+        print("Args checkbf is True")
 
     return (
             args.token,
