@@ -25,37 +25,43 @@ def get_repo_name(github_repository):
 
 def load_arguments(github_repository, github_ref_name, github_run_id):
     
-    commit_msg = "Veracode baseline file update from repo: %s branch: %s pipeline: %s" \
-        % (github_repository, github_ref_name, github_run_id)
-
-    default_repository = github_repository
-
-    default_ref_name = github_ref_name
-
-    org_name = get_org_name(github_repository)
-
     parser = ArgumentParser()
     parser.add_argument("-t", "--token", required=True,
                         help="Github Access Token")
-    parser.add_argument("-s", "--source", default=(org_name + "/veracode-baseline"), \
+    parser.add_argument("-s", "--source", \
                         help="Name of the repository where the baseline files will be stored. Example: wasptree/veracode-baseline")
     #parser.add_argument("-p", "--policy", default=True,
     #                    help="Specify whether Policy scan results should be downloaded")
     parser.add_argument("-f", "--file", default="results.json",
                         help="Specify the name of the results/baseline file (json) to read in")
-    parser.add_argument("-c", "--commit", default=commit_msg,
+    parser.add_argument("-c", "--commit",
                         help="Custom commit message")
     #parser.add_argument("-a", "--appname", default=github_repository,
     #                    help="Specify the appname, used to download policy-to-baseline from Veracode platform")
-    parser.add_argument("-b", "--branch", default=default_ref_name,
+    parser.add_argument("-b", "--branch",
                         help="Override the default ref, which is the branch name")
-    parser.add_argument("-r", "--repo", default=default_repository,
+    parser.add_argument("-r", "--repo",
                         help="Override the name of the owner/project for storage. Example : wasptree/verademo")
     parser.add_argument("-cf", "--checkbf", default=True,
                         help="Check if the baseline file to be pushed is new (less than 10 minutes old)")
     parser.add_argument("-u", "--update", default=False,
                         help="Used to update the baseline file in the repository, run after scan")
     args = parser.parse_args()
+
+    org_name = get_org_name(github_repository)
+
+    if args.commit is None:
+        args.commit = "Veracode baseline file update from repo: %s branch: %s pipeline: %s" \
+        % (github_repository, github_ref_name, github_run_id)
+    
+    if args.repo is None:
+        args.repo = github_repository
+    
+    if args.source is None:
+        args.source = (org_name + "/veracode-baseline")
+    
+    if args.branch is None:
+        args.branch = github_ref_name
 
     print("post args github_repository : " + github_repository)
     print("post args repo : " + args.repo)
