@@ -23,14 +23,17 @@ def get_repo_name(github_repository):
     else:
         log("Invalid GITHUB_REPOSITORY format: %s Expected 'owner/repo'." % github_repository, 'ERROR')
 
-def load_arguments(github_repository, github_ref_name, github_run_id):
+def load_arguments(github_repository=None, github_ref_name=None, github_run_id=None):
     
-    commit_msg = "Veracode baseline file update from repo: %s branch: %s pipeline: %s" \
+    if commit_msg is None:
+        commit_msg = "Veracode baseline file update from repo: %s branch: %s pipeline: %s" \
     % (github_repository, github_ref_name, github_run_id)
 
-    default_repository = github_repository
+    if default_repository is None:
+        default_repository = github_repository
 
-    default_ref_name = github_ref_name
+    if default_ref_name is None:
+        default_ref_name = github_ref_name
 
     org_name = get_org_name(github_repository)
 
@@ -47,7 +50,7 @@ def load_arguments(github_repository, github_ref_name, github_run_id):
                         help="Custom commit message")
     #parser.add_argument("-a", "--appname", default=github_repository,
     #                    help="Specify the appname, used to download policy-to-baseline from Veracode platform")
-    parser.add_argument("-b", "--branch", default=github_ref_name,
+    parser.add_argument("-b", "--branch", default=default_ref_name,
                         help="Override the default ref, which is the branch name")
     parser.add_argument("-r", "--repo", default=default_repository,
                         help="Override the name of the owner/project for storage. Example : wasptree/verademo")
