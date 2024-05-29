@@ -23,17 +23,14 @@ def get_repo_name(github_repository):
     else:
         log("Invalid GITHUB_REPOSITORY format: %s Expected 'owner/repo'." % github_repository, 'ERROR')
 
-def load_arguments(commit_msg=None, github_repository=None, github_ref_name=None, github_run_id=None):
+def load_arguments(github_repository, github_ref_name, github_run_id):
     
-    if commit_msg is None:
-        commit_msg = "Veracode baseline file update from repo: %s branch: %s pipeline: %s" \
-    % (github_repository, github_ref_name, github_run_id)
+    commit_msg = "Veracode baseline file update from repo: %s branch: %s pipeline: %s" \
+        % (github_repository, github_ref_name, github_run_id)
 
-    if default_repository is None:
-        default_repository = github_repository
+    default_repository = github_repository
 
-    if default_ref_name is None:
-        default_ref_name = github_ref_name
+    default_ref_name = github_ref_name
 
     org_name = get_org_name(github_repository)
 
@@ -83,12 +80,12 @@ def is_pull_request_event():
 
 # Function to grab the Github variables, used to store and lookup the required baseline file
 def get_github_variables():
-    #github_base_ref = os.getenv('GITHUB_BASE_REF')
-    #github_ref = os.getenv('GITHUB_REF')
-    #github_repository = os.getenv('GITHUB_REPOSITORY')
-    #github_sha = os.getenv('GITHUB_SHA')
-    #github_run_id = os.getenv('GITHUB_RUN_ID')
-    #github_ref_name = os.getenv('GITHUB_REF_NAME')
+    github_base_ref = os.getenv('GITHUB_BASE_REF')
+    github_ref = os.getenv('GITHUB_REF')
+    github_repository = os.getenv('GITHUB_REPOSITORY')
+    github_sha = os.getenv('GITHUB_SHA')
+    github_run_id = os.getenv('GITHUB_RUN_ID')
+    github_ref_name = os.getenv('GITHUB_REF_NAME')
     
     #print("github_base_ref: " + github_base_ref)
     #print("github_ref: " + github_ref)
@@ -97,12 +94,12 @@ def get_github_variables():
     #print("github_run_id: " + github_run_id)
     #print("github_sha: " +github_sha)
 
-    github_base_ref = ""
-    github_ref = "refs/heads/autobaseline"
-    github_repository = "Wasptree-Veracode/verademo"
-    github_sha = "fd6dddaec6b74109d8250343ebc431c126dd3cfd"
-    github_run_id = "9284829460"
-    github_ref_name = "autobaseline"
+    #github_base_ref = ""
+    #github_ref = "refs/heads/autobaseline"
+    #github_repository = "Wasptree-Veracode/verademo"
+    #github_sha = "fd6dddaec6b74109d8250343ebc431c126dd3cfd"
+    #github_run_id = "9284829460"
+    #github_ref_name = "autobaseline"
 
     return (github_base_ref,
             github_ref,
@@ -247,7 +244,7 @@ if __name__ == "__main__":
     repo,
     check_baseline,
     update
-    ) = load_arguments(None, github_repository, github_ref_name, github_run_id)
+    ) = load_arguments(github_repository, github_ref_name, github_run_id)
 
     print("repo : " + repo)
 
