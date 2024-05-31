@@ -7,10 +7,10 @@ inputs:
     description: "Github Access Token"
     required: true
   source:
-    description: "Name of the repository where the baseline will be stored."
+    description: "Name of the repository where the baseline will be stored. - Default <owner>/veracode-baseline"
     required: false
   file:
-    description: "Specify the name of the results/baseline file (json) to read in"
+    description: "Specify the name of the results/baseline file (json) to read in - Default results.json"
     required: false
   commit:
     description: "Custom commit message"
@@ -19,13 +19,13 @@ inputs:
     description: "Override the default ref, which is the branch name"
     required: false
   repo:
-    description: "Overrise the defaut repository, which is taken from the Github environment"
+    description: "Override the defaut repository - Default is $GITHUB_REPOSITORY"
     required: false
   checkbf:
-    description: "Check if the baseline file to be pushed is new (less than 10 minutes old)"
+    description: "Check if the baseline file to be pushed is new (less than 10 minutes old) - Default True"
     required: false
   update:
-    description: "Whether a new baseline file should be pushed up to the repository"
+    description: "Whether a new baseline file should be pushed up to the repository - Default False"
     required: false
 
 runs:

@@ -185,6 +185,8 @@ def download_baseline_file(access_token, repo_name, file_path, output_path):
         with open(output_path, 'w') as file:
             file.write(file_content)
 
+        log(f"Successfully downloaded baseline file : {output_path}", 'INFO')
+
         return True
     except Exception as e:
         log(f"Error downloading file from repository: {file_path} {e}", 'WARN')
