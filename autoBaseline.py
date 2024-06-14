@@ -3,7 +3,7 @@ from github import Github
 from datetime import datetime
 from modules.baselineLogging import log
 from argparse import ArgumentParser
-from actions_toolkit import inputs, outputs, log
+from actions_toolkit import core
 import json
 
 TEMP_DIRECTORY = ".veracode-autobaseline"
@@ -20,25 +20,25 @@ def get_repo_name(github_repository):
 
 def load_arguments():
 
-    github_base_ref = inputs.get('GITHUB_BASE_REF')
-    github_ref = inputs.get('GITHUB_REF')
-    github_repository = inputs.get('GITHUB_REPOSITORY')
-    github_sha = inputs.get('GITHUB_SHA')
-    github_run_id = inputs.get('GITHUB_RUN_ID')
+    github_base_ref = core.get_input('GITHUB_BASE_REF')
+    github_ref = core.get_input('GITHUB_REF')
+    github_repository = core.get_input('GITHUB_REPOSITORY')
+    github_sha = core.get_input('GITHUB_SHA')
+    github_run_id = core.get_input('GITHUB_RUN_ID')
     github_ref_name = github_ref.split('/')[-1]
     
     org_name = github_repository.split('/')[0]
 
     commit_msg = f"Veracode baseline file update from repo: {github_repository} branch: {github_ref_name} pipeline: {github_run_id}"
 
-    token = inputs.get('token', required=True)
-    source = inputs.get('source', default=f"{org_name}/veracode-baseline")
-    file = inputs.get('file', default="results.json")
-    commit = inputs.get('commit', default=commit_msg)
-    branch = inputs.get('branch', default=github_base_ref)
-    repo = inputs.get('repo', default=github_repository)
-    checkbf = inputs.get('checkbf', default=True)
-    update = inputs.get('update', default=False)
+    token = core.get_input('token', required=True)
+    source = core.get_input('source', default=f"{org_name}/veracode-baseline")
+    file = core.get_input('file', default="results.json")
+    commit = core.get_input('commit', default=commit_msg)
+    branch = core.get_input('branch', default=github_base_ref)
+    repo = core.get_input('repo', default=github_repository)
+    checkbf = core.get_input('checkbf', default=True)
+    update = core.get_input('update', default=False)
 
     return token, source, file, commit, branch, repo, checkbf, update
 
