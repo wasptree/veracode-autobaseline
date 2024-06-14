@@ -26,6 +26,8 @@ def load_arguments():
     github_sha = core.get_input('GITHUB_SHA')
     github_run_id = core.get_input('GITHUB_RUN_ID')
     github_ref_name = github_ref.split('/')[-1]
+
+    print("DEBUG : " + str(github_repository))
     
     org_name = github_repository.split('/')[0]
 
