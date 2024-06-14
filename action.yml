@@ -3,13 +3,13 @@ description: "This action Will attempt to automatically store and download basel
 author: "Andy Sutcliffe - Wasptree"
 
 inputs:
-  token:
+  baseline_token:
     description: "Github Access Token"
     required: true
   source:
     description: "Name of the repository where the baseline will be stored. - Default <owner>/veracode-baseline"
     required: false
-  file:
+  result_file:
     description: "Specify the name of the results/baseline file (json) to read in - Default results.json"
     required: false
   commit:
