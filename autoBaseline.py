@@ -32,13 +32,13 @@ def load_arguments():
     commit_msg = f"Veracode baseline file update from repo: {github_repository} branch: {github_ref_name} pipeline: {github_run_id}"
 
     token = core.get_input('token', required=True)
-    source = core.get_input('source', default=f"{org_name}/veracode-baseline")
-    file = core.get_input('file', default="results.json")
-    commit = core.get_input('commit', default=commit_msg)
-    branch = core.get_input('branch', default=github_base_ref)
-    repo = core.get_input('repo', default=github_repository)
-    checkbf = core.get_input('checkbf', default=True)
-    update = core.get_input('update', default=False)
+    source = core.get_input('source') or f"{org_name}/veracode-baseline"
+    file = core.get_input('file') or "results.json"
+    commit = core.get_input('commit') or commit_msg
+    branch = core.get_input('branch') or github_base_ref
+    repo = core.get_input('repo') or github_repository
+    checkbf = core.get_input('checkbf') or True
+    update = core.get_input('update') or False
 
     return token, source, file, commit, branch, repo, checkbf, update
 
