@@ -201,8 +201,14 @@ if __name__ == "__main__":
     update
     ) = load_arguments()
 
+    print("DEBUG : " + repo)
+
     # split out the repo name
     repo_name = get_repo_name(repo)
+
+
+    print("DEBUG : " + repo_name)
+
 
     # Specify the path structure for the baseline files
     target_path = repo_name + "/" + branch + "/" + "baseline.json"
