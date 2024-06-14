@@ -3,6 +3,7 @@ from github import Github
 from datetime import datetime
 from modules.baselineLogging import log
 from argparse import ArgumentParser
+from actions_toolkit import inputs, outputs, log
 import json
 
 TEMP_DIRECTORY = ".veracode-autobaseline"
@@ -10,12 +11,6 @@ BASELINE_FILE = "baseline.json"
 
 def check_github():
     return 'GITHUB_ACTIONS' in os.environ
-
-def get_org_name(github_repository):
-    if '/' in github_repository:
-        return github_repository.split('/')[0]
-    else:
-        log("Invalid GITHUB_REPOSITORY format: %s Expected 'owner/repo'." % github_repository, 'ERROR')
 
 def get_repo_name(github_repository):
     if '/' in github_repository:
@@ -25,68 +20,27 @@ def get_repo_name(github_repository):
 
 def load_arguments():
 
-    (
-    github_base_ref,
-    github_ref,
-    github_repository,
-    github_sha,
-    github_run_id,
-    github_ref_name
-    ) = get_github_variables()
-
-    org_name = get_org_name(github_repository)
-
-    commit_msg = "Veracode baseline file update from repo: %s branch: %s pipeline: %s" \
-    % (github_repository, github_ref_name, github_run_id)
+    github_base_ref = inputs.get('GITHUB_BASE_REF')
+    github_ref = inputs.get('GITHUB_REF')
+    github_repository = inputs.get('GITHUB_REPOSITORY')
+    github_sha = inputs.get('GITHUB_SHA')
+    github_run_id = inputs.get('GITHUB_RUN_ID')
+    github_ref_name = github_ref.split('/')[-1]
     
-    parser = ArgumentParser()
-    parser.add_argument("-t", "--token", required=True,
-                        help="Github Access Token")
-    parser.add_argument("-s", "--source",
-                        help="Name of the repository where the baseline files will be stored. Default : <owner>/veracode-baseline")
-    parser.add_argument("-f", "--file",
-                        help="Specify the name of the results/baseline file (json) to read in. | Default : results.json")
-    parser.add_argument("-c", "--commit",
-                        help="Custom commit message")
-    parser.add_argument("-b", "--branch",
-                        help="Override the default ref, which is the branch name | Default is GITHUB_BASE_REF ")
-    parser.add_argument("-r", "--repo",
-                        help="Override the name of the owner/project for storage. | Default is GITHUB_REPOSITORY ")
-    parser.add_argument("-cf", "--checkbf",
-                        help="Check if the baseline file to be pushed is new (less than 10 minutes old) | Default is True")
-    parser.add_argument("-u", "--update",
-                        help="Used to update the baseline file in the repository, run after scan. | Default is False")
-    args = parser.parse_args()
+    org_name = github_repository.split('/')[0]
 
-    if args.file == "":
-        args.file = "results.json"
-    if args.source == "":
-        args.source = (org_name + "/veracode-baseline")
-    if args.commit == "":
-        args.commit = commit_msg
-    if args.branch == "":
-        args.branch = github_base_ref
-    if args.repo == "":
-        args.repo = github_repository
-    if args.checkbf == "":
-        args.checkbf = True
-    else:
-        args.checkbf = bool(args.checkbf)
-    if args.update == "":
-        args.update = False
-    else:
-        args.update = bool(args.update)
+    commit_msg = f"Veracode baseline file update from repo: {github_repository} branch: {github_ref_name} pipeline: {github_run_id}"
 
-    return (
-            args.token,
-            args.source,
-            args.file,
-            args.commit,
-            args.branch,
-            args.repo,
-            args.checkbf,
-            args.update
-            )
+    token = inputs.get('token', required=True)
+    source = inputs.get('source', default=f"{org_name}/veracode-baseline")
+    file = inputs.get('file', default="results.json")
+    commit = inputs.get('commit', default=commit_msg)
+    branch = inputs.get('branch', default=github_base_ref)
+    repo = inputs.get('repo', default=github_repository)
+    checkbf = inputs.get('checkbf', default=True)
+    update = inputs.get('update', default=False)
+
+    return token, source, file, commit, branch, repo, checkbf, update
 
 
 # Function to check if the environment is a pull_request event

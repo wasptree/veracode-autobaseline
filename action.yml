@@ -31,13 +31,3 @@ inputs:
 runs:
   using: "docker"
   image: "docker://wasptree/veracode-autobaseline:latest"
-  args: [
-    "--token", "${{ inputs.token }}",
-    "--source", "${{ inputs.source }}",
-    "--file", "${{ inputs.file }}",
-    "--commit", "${{ inputs.commit }}",
-    "--branch", "${{ inputs.branch }}",
-    "--repo", "${{ inputs.repo }}",
-    "--checkbf", "${{ inputs.checkbf }}",
-    "--update", "${{ inputs.update }}"
-  ]
