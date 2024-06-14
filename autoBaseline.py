@@ -12,6 +12,12 @@ BASELINE_FILE = "baseline.json"
 def check_github():
     return 'GITHUB_ACTIONS' in os.environ
 
+def get_org_name(github_repository):
+    if '/' in github_repository:
+        return github_repository.split('/')[0]
+    else:
+        log("Invalid GITHUB_REPOSITORY format: %s Expected 'owner/repo'." % github_repository, 'ERROR')
+
 def get_repo_name(github_repository):
     if '/' in github_repository:
         return github_repository.split('/')[1]
@@ -20,18 +26,18 @@ def get_repo_name(github_repository):
 
 def load_arguments():
 
-    github_base_ref = core.get_input('GITHUB_BASE_REF')
-    github_ref = core.get_input('GITHUB_REF')
-    github_repository = core.get_input('GITHUB_REPOSITORY')
-    github_sha = core.get_input('GITHUB_SHA')
-    github_run_id = core.get_input('GITHUB_RUN_ID')
-    github_ref_name = github_ref.split('/')[-1]
-
-    print("DEBUG : " + str(github_repository))
+    (
+    github_base_ref,
+    github_ref,
+    github_repository,
+    github_sha,
+    github_run_id,
+    github_ref_name
+    ) = get_github_variables()
     
-    org_name = github_repository.split('/')[0]
+    org_name = get_org_name(github_repository)
 
-    commit_msg = f"Veracode baseline file update from repo: {github_repository} branch: {github_ref_name} pipeline: {github_run_id}"
+    commit_msg = f"Veracode baseline file update from repo: {github_repository} branch: {github_base_ref} pipeline: {github_run_id}"
 
     token = core.get_input('token', required=True)
     source = core.get_input('source') or f"{org_name}/veracode-baseline"
