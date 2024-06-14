@@ -39,7 +39,7 @@ def load_arguments():
 
     commit_msg = f"Veracode baseline file update from repo: {github_repository} branch: {github_base_ref} pipeline: {github_run_id}"
 
-    token = core.get_input('token', required=True)
+    token = core.get_input('baseline_token', required=True)
     source = core.get_input('source') or f"{org_name}/veracode-baseline"
     file = core.get_input('file') or "results.json"
     commit = core.get_input('commit') or commit_msg
