@@ -185,7 +185,7 @@ if __name__ == "__main__":
     #Check that we are executing within a Github action
     if not check_github():
         log("Not executing within a Github action - Exiting", 'ERROR')
-        exit(1)
+        exit(0)
 
     #Grab environment variables from pipeline
     (
@@ -219,9 +219,11 @@ if __name__ == "__main__":
 
     # Check if running on PR, if so attempt to download a baseline file
     # If not PR attempt to upload a baseline file
-    if is_pull_request_event() and not update:
-        if not download_baseline_file(token, source, target_path, output_file) and not os.path.exists(output_file):
-            # If no baseline file , create a dummy to avoid pipeline scan failure
+    if not update:
+        if is_pull_request_event():
+          download_baseline_file(token, source, target_path, output_file)
+        if not os.path.exists(output_file):
+        # If no baseline file , create a dummy to avoid pipeline scan failure
             dummy_baseline(output_file)
         is_valid_json(output_file)
     #Check that the baseline file is valid Json before continuing
