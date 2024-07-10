@@ -37,13 +37,19 @@ def load_arguments():
     
     org_name = get_org_name(github_repository)
 
-    commit_msg = f"Veracode baseline file update from repo: {github_repository} branch: {github_base_ref} pipeline: {github_run_id}"
+    # If not running in a PR , the github_base_ref is not set, use current branch instead
+    if github_base_ref == "":
+        env_branch = github_ref_name
+    else:
+        env_branch = github_base_ref
+
+    commit_msg = f"Veracode baseline file update from repo: {github_repository} branch: {env_branch} pipeline: {github_run_id}"
 
     token = core.get_input('baseline_token', required=True)
     source = core.get_input('source') or f"{org_name}/veracode-baseline"
     file = core.get_input('file') or "results.json"
     commit = core.get_input('commit') or commit_msg
-    branch = core.get_input('branch') or github_base_ref
+    branch = core.get_input('branch') or env_branch
     repo = core.get_input('repo') or github_repository
     checkbf = core.get_input('checkbf') or True
     update = core.get_input('update') or False
