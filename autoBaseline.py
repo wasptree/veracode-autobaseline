@@ -80,6 +80,7 @@ def push_file_to_repo(token, repo_name, file_path, file_content, commit_message)
 
     print(f"DEBUG - {repo_name}")
     print(f"DEBUG - {commit_message}")
+    print(f"DEBUG - {file_path}")
     
     # Create a new file in the repository
     try:
