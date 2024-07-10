@@ -30,4 +30,4 @@ inputs:
 
 runs:
   using: "docker"
-  image: "docker://wasptree/veracode-autobaseline:latest"
+  image: "Dockerfile"
